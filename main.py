@@ -5,8 +5,6 @@ from copy import deepcopy
 #February 10, 2023
 
 #finds the best path to all the dorms for senior caroling
-#parameters: start dorm, end dorm
-#returns: best path and numbers of paths visited
 class AStarCaroling:
     #1D array of all building names
     dorm_names = ["Main", "Watson", "Flinn", "Redlich", "Edelman", "Wieler", "Memo", "Buehler", "Coy", "Tinker", "V-S", "Garland", "Dana"]
@@ -37,8 +35,8 @@ class AStarCaroling:
         self.priority_queue = []
 
     #finds the best path from start to end including all nodes, and counts how many nodes visited
-    #start: starting node
-    #end: goal node
+    #param: start_dorm: dorm at start of path
+    #param: end_dorm: dorm at end of path 
     #return: optimal path if possible, else empty path
     def find_best_path(self, start_dorm, end_dorm):
         self.priority_queue.append([0, [start_dorm]])
@@ -58,7 +56,7 @@ class AStarCaroling:
                     current_path_copy[1].append(i)
 
                     self.count_paths += 1
-                    print("D: " + str(current_path_copy[0] + ", P: " + str(current_path_copy[1])))
+                    print("D: " + str(current_path_copy[0]) + ", P: " + str(current_path_copy[1]))
 
                     if len(current_path_copy[1]) == len(AStarCaroling.distances) and i == end_dorm:
                         return current_path_copy
@@ -66,14 +64,15 @@ class AStarCaroling:
                         if self.count_paths == 1:
                             self.priority_queue.append(current_path_copy)
                         else:
-                            for item in self.priority_queue:
-                                if current_path_copy[0] < item[0]:
-                                    index = self.priority_queue.index(item)
-                                    self.priority_queue.insert(index, current_path_copy)
-                                    break
-                                elif self.priority_queue.index(item) == (len(self.priority_queue) - 1):
-                                    self.priority_queue.append(current_path_copy)
-                                    break
+                            done = False
+                            index = 0
+                            while (done == False) and (index < len(self.priority_queue)):
+                                temp_path = self.priority_queue[index]
+                                if current_path_copy[0] < temp_path[0]:
+                                    done = True
+                                else:
+                                    index += 1
+                            self.priority_queue.insert(index, current_path_copy)
         return []
 
     #takes user input and returns best path and number of nodes visited
